@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Curve",
     "author": "The French Monkey",
-    "version": (1, 2, 3),
+    "version": (1, 2, 4),
     "blender": (4, 2, 0),
     "location": "Sidebar > Curve Generator (Shader, Geometry, Compositor, Texture Node Editors)",
     "description": "Generate float curves",
@@ -18,6 +18,11 @@ import math
 import re
 import os
 import json
+
+try:
+    from . import relay_updater
+except ImportError:  # the Addon Collection has its own updates
+    relay_updater = None
 
 PRESET_FILE = os.path.join(os.path.expanduser("~"), "curve_generator_presets.json")
 
@@ -567,6 +572,8 @@ class NODE_PT_curve_generator(bpy.types.Panel):
     bl_category = "Curve"
 
     def draw(self, context):
+        if relay_updater:
+            relay_updater.draw(self.layout)
         layout = self.layout
         s = context.scene.curve_gen_settings
         tree = active_tree(context)
@@ -827,11 +834,15 @@ classes = (
 )
 
 def register():
+    if relay_updater:
+        relay_updater.register("blender-curve")
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.Scene.curve_gen_settings = bpy.props.PointerProperty(type=CurveGenSettings)
 
 def unregister():
+    if relay_updater:
+        relay_updater.unregister()
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.curve_gen_settings

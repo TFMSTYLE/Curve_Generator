@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.4
+
+- Added update checks: when a new version is published on Relay, an Update button appears in this panel. Nothing goes online when Allow Online Access is off, and Blender store installs keep updating through the store
+
 ## 1.2.3
 
 - Fixed the Generate button staying grey when the Float Curve node is inside a node group
