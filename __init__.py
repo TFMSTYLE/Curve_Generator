@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Curve",
     "author": "The French Monkey",
-    "version": (1, 2, 2),
+    "version": (1, 2, 3),
     "blender": (4, 2, 0),
     "location": "Sidebar > Curve Generator (Shader, Geometry, Compositor, Texture Node Editors)",
     "description": "Generate float curves",
@@ -312,7 +312,7 @@ def generate_curve_from_settings(context):
     else:
         min_val, max_val = 0.0, 1.0
 
-    tree = getattr(context.space_data, "node_tree", None)
+    tree = active_tree(context)
     if not tree:
         return {'CANCELLED'}
     selected_nodes = [n for n in tree.nodes if n.select and n.bl_idname == 'ShaderNodeFloatCurve']
@@ -387,6 +387,11 @@ def generate_curve_from_settings(context):
 # Save/Load operators and menu
 # ------------------------------
 
+def active_tree(context):
+    # edit_tree is the tree being edited, so a node inside a group is found too.
+    space = context.space_data
+    return getattr(space, "edit_tree", None) or getattr(space, "node_tree", None)
+
 class CURVE_MT_presets_menu(bpy.types.Menu):
     bl_label = "Saved Curves"
     bl_idname = "CURVE_MT_presets_menu"
@@ -415,7 +420,7 @@ class CURVE_OT_select_preset(bpy.types.Operator):
             return {'CANCELLED'}
 
         # get first selected float curve node
-        tree = getattr(context.space_data, "node_tree", None)
+        tree = active_tree(context)
         if not tree:
             return {'CANCELLED'}
         selected_nodes = [n for n in tree.nodes if n.select and n.bl_idname == 'ShaderNodeFloatCurve']
@@ -510,7 +515,7 @@ class CURVE_OT_save_preset(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
     def execute(self, context):
         # find selected float curve node
-        tree = getattr(context.space_data, "node_tree", None)
+        tree = active_tree(context)
         if not tree:
             self.report({'WARNING'}, "No node tree found")
             return {'CANCELLED'}
@@ -541,7 +546,7 @@ class NODE_OT_GenerateCurve(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree = getattr(context.space_data, "node_tree", None)
+        tree = active_tree(context)
         if not tree:
             return False
         selected_nodes = [n for n in tree.nodes if n.select and n.bl_idname == 'ShaderNodeFloatCurve']
@@ -564,7 +569,7 @@ class NODE_PT_curve_generator(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         s = context.scene.curve_gen_settings
-        tree = getattr(context.space_data, "node_tree", None)
+        tree = active_tree(context)
         selected_nodes = [n for n in tree.nodes if n.select and n.bl_idname == 'ShaderNodeFloatCurve'] if tree else []
 
         layout.operator("node.css_generate_curve", icon='FCURVE')

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+- Fixed the Generate button staying grey when the Float Curve node is inside a node group
+
 ## 1.2.2
 
 The source code is now in this repository, with the license it has always been released under.
