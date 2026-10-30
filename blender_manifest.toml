@@ -1,13 +1,17 @@
 schema_version = "1.0.0"
 
-id = "curve"
-version = "1.2.1"
-name = "TFMSTYLE - Curve"
+id = "curve_generator"
+version = "1.2.2"
+name = "Curve Generator"
 tagline = "Generate float curves"
+tags = ["Node", "Geometry Nodes", "Add Curve"]
 maintainer = "The French Monkey"
 license = ["SPDX:GPL-3.0-or-later"]
+copyright = ["2025-2026 The French Monkey"]
 type = "add-on"
 blender_version_min = "4.2.0"
 
 website = "https://tfmstyle.com"
 
+[build]
+paths = ["__init__.py", "LICENSE"]

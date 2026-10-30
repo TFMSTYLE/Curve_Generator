@@ -1,7 +1,10 @@
+# SPDX-FileCopyrightText: 2025-2026 The French Monkey
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 bl_info = {
     "name": "Curve",
     "author": "The French Monkey",
-    "version": (1, 2, 1),
+    "version": (1, 2, 2),
     "blender": (4, 2, 0),
     "location": "Sidebar > Curve Generator (Shader, Geometry, Compositor, Texture Node Editors)",
     "description": "Generate float curves",
