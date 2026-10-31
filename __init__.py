@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Curve",
     "author": "The French Monkey",
-    "version": (1, 2, 4),
+    "version": (1, 2, 5),
     "blender": (4, 2, 0),
     "location": "Sidebar > Curve Generator (Shader, Geometry, Compositor, Texture Node Editors)",
     "description": "Generate float curves",
@@ -18,13 +18,15 @@ import math
 import re
 import os
 import json
+import shutil
 
 try:
     from . import relay_updater
 except ImportError:  # the Addon Collection has its own updates
     relay_updater = None
 
-PRESET_FILE = os.path.join(os.path.expanduser("~"), "curve_generator_presets.json")
+PRESET_NAME = "curve_generator_presets.json"
+OLD_PRESET_FILE = os.path.join(os.path.expanduser("~"), PRESET_NAME)  # where presets lived before 1.2.5
 
 # ------------------------------
 # Preset Curves
@@ -235,39 +237,62 @@ def generate_peaks_curve(peaks_count=2, peak_max=1.0, peaks_randomizer=0.0):
 # Save/Load preset helpers
 # ------------------------------
 
-def save_curve_to_file(preset_dict):
-    presets = []
-    if os.path.exists(PRESET_FILE):
+def clean_presets(data):
+    """Only well formed presets, so a hand edited file cannot break saving."""
+    if not isinstance(data, list):
+        return []
+    return [p for p in data if isinstance(p, dict) and "name" in p]
+
+def get_preset_file():
+    """Blender's own folder. An older preset file is copied across once and left in place."""
+    try:
+        folder = bpy.utils.extension_path_user(__package__, create=True)
+    except Exception:  # inside the Addon Collection
+        folder = bpy.utils.user_resource('CONFIG', path="curve_generator", create=True)
+    path = os.path.join(folder, PRESET_NAME)
+    if not os.path.exists(path) and os.path.exists(OLD_PRESET_FILE):
         try:
-            with open(PRESET_FILE, "r") as f:
-                presets = json.load(f)
+            shutil.copyfile(OLD_PRESET_FILE, path)
+        except OSError:
+            pass
+    return path
+
+def save_curve_to_file(preset_dict):
+    preset_file = get_preset_file()
+    presets = []
+    if os.path.exists(preset_file):
+        try:
+            with open(preset_file, "r") as f:
+                presets = clean_presets(json.load(f))
         except Exception:
             presets = []
     # remove any existing with same name
     presets = [p for p in presets if p.get('name') != preset_dict.get('name')]
     presets.append(preset_dict)
     try:
-        with open(PRESET_FILE, "w") as f:
+        with open(preset_file, "w") as f:
             json.dump(presets, f, indent=4)
     except Exception:
         pass
 
 def get_available_presets():
-    if not os.path.exists(PRESET_FILE):
+    preset_file = get_preset_file()
+    if not os.path.exists(preset_file):
         return []
     try:
-        with open(PRESET_FILE, "r") as f:
-            presets = json.load(f)
+        with open(preset_file, "r") as f:
+            presets = clean_presets(json.load(f))
             return [p.get('name', "") for p in presets if 'name' in p]
     except Exception:
         return []
 
 def load_curve_from_file(name):
-    if not os.path.exists(PRESET_FILE):
+    preset_file = get_preset_file()
+    if not os.path.exists(preset_file):
         return None
     try:
-        with open(PRESET_FILE, "r") as f:
-            presets = json.load(f)
+        with open(preset_file, "r") as f:
+            presets = clean_presets(json.load(f))
     except Exception:
         return None
     for p in presets:

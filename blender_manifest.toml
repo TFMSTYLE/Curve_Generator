@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "curve_generator"
-version = "1.2.4"
+version = "1.2.5"
 name = "Curve Generator"
 tagline = "Generate float curves"
 tags = ["Node", "Geometry Nodes", "Add Curve"]

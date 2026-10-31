@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5
+
+- Presets now live in Blender's own user folder instead of your home folder. Existing presets are copied across automatically, and the old file is left where it was. Saving a preset no longer fails on a damaged preset file
+
 ## 1.2.4
 
 - Added update checks: when a new version is published on Relay, an Update button appears in this panel. Nothing goes online when Allow Online Access is off, and Blender store installs keep updating through the store
