@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Curve",
     "author": "The French Monkey",
-    "version": (1, 2, 5),
+    "version": (1, 2, 6),
     "blender": (4, 2, 0),
     "location": "Sidebar > Curve Generator (Shader, Geometry, Compositor, Texture Node Editors)",
     "description": "Generate float curves",

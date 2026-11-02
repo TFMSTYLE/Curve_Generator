@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.6
+
+- Updates now come from one place. Installed from the Blender store or from the TFMSTYLE repository, Blender updates this addon itself and the Update button here stays hidden. Installed from a zip, it still updates itself from Relay
+
 ## 1.2.5
 
 - Presets now live in Blender's own user folder instead of your home folder. Existing presets are copied across automatically, and the old file is left where it was. Saving a preset no longer fails on a damaged preset file
